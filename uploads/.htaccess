@@ -1,0 +1,19 @@
+# Prevent direct access to uploaded files
+Options -Indexes
+
+# Only allow specific file types
+<FilesMatch "\.(jpg|jpeg|png|gif|webp|pdf|doc|docx)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Block PHP execution in uploads folder
+<FilesMatch "\.(php|php3|php4|php5|phtml|pl|cgi|py|sh|exe)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Force download for certain file types
+<FilesMatch "\.(pdf|doc|docx)$">
+    Header set Content-Disposition "attachment"
+</FilesMatch>

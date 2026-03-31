@@ -1,0 +1,113 @@
+# =============================================
+# SCHOOL WEBSITE - COMPLETE SECURITY CONFIGURATION
+# Place this file in your website root directory
+# =============================================
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# =============================================
+# FORCE HTTPS (Uncomment when SSL is installed)
+# =============================================
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# =============================================
+# SECURITY HEADERS
+# =============================================
+Header set X-Frame-Options "DENY"
+Header set X-Content-Type-Options "nosniff"
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+# =============================================
+# PREVENT DIRECTORY LISTING
+# =============================================
+Options -Indexes
+
+# =============================================
+# PROTECT SENSITIVE FILES
+# =============================================
+<FilesMatch "^(config\.php|\.htaccess|\.htpasswd|\.ini|\.log|\.sql|\.json|composer\.json|composer\.lock)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect PHP files in includes folder
+<IfModule mod_rewrite.c>
+    RewriteRule ^includes/ - [F,L]
+    RewriteRule ^admin/includes/ - [F,L]
+</IfModule>
+
+# =============================================
+# PREVENT SQL INJECTION VIA URL
+# =============================================
+RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} (SELECT|INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|TRUNCATE) [NC]
+RewriteRule ^(.*)$ - [F,L]
+
+# =============================================
+# BLOCK COMMON ATTACK PATHS
+# =============================================
+RewriteRule ^(commented|delete|upload|includes|wp-content|wp-includes) - [F,L]
+
+# =============================================
+# BLOCK BAD BOTS AND SCRAPERS
+# =============================================
+SetEnvIfNoCase User-Agent "wget|curl|scrapy|python|java|php" bad_bot
+Deny from env=bad_bot
+
+# =============================================
+# PREVENT ACCESS TO HIDDEN FILES
+# =============================================
+RedirectMatch 404 /\..*$
+
+# =============================================
+# CACHE STATIC FILES (Improve Performance)
+# =============================================
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "max-age=2592000, public, immutable"
+</FilesMatch>
+
+<FilesMatch "\.(html|htm|php)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</FilesMatch>
+
+# =============================================
+# COMPRESS FILES FOR FASTER LOADING
+# =============================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json application/xml
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# =============================================
+# CUSTOM ERROR PAGES
+# =============================================
+ErrorDocument 400 /error.php?code=400
+ErrorDocument 401 /error.php?code=401
+ErrorDocument 403 /error.php?code=403
+ErrorDocument 404 /error.php?code=404
+ErrorDocument 500 /error.php?code=500
+
+# =============================================
+# PREVENT HOTLINKING OF IMAGES
+# =============================================
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https://(www\.)?yourschool\.com/ [NC]
+RewriteRule \.(jpg|jpeg|png|gif|webp)$ - [F,NC]
+
+# =============================================
+# SET DEFAULT CHARACTER SET
+# =============================================
+AddDefaultCharset UTF-8
+
+# =============================================
+# DISABLE SERVER SIGNATURE
+# =============================================
+ServerSignature Off
