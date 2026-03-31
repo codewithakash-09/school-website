@@ -67,14 +67,13 @@ define('SECRET_SALT', 'replace_with_32_char_random_string_9z8y7x6w5v4u3t2s1r0q')
 define('CSRF_TOKEN_KEY', 'replace_with_another_random_string_abcdef1234567890');
 
 // =============================================
-// SITE CONFIGURATION
+// SITE CONFIGURATION - DYNAMIC DETECTION
 // =============================================
-define('SITE_URL', 'https://yourschool.com');  // CHANGE THIS
-define('SITE_NAME', 'My School Name');          // CHANGE THIS
-define('SITE_EMAIL', 'info@yourschool.com');    // CHANGE THIS
-define('ADMIN_EMAIL', 'admin@yourschool.com');  // CHANGE THIS
+// Automatically detects protocol (http/https) and the current domain/host
+$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+$host = $_SERVER['HTTP_HOST'];
+define('SITE_URL', $protocol . "://" . $host);
 
-// =============================================
 // SECURITY LIMITS
 // =============================================
 define('MAX_LOGIN_ATTEMPTS', 5);
