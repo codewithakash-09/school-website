@@ -8,8 +8,12 @@
 // =============================================
 // ERROR REPORTING (Disable in production)
 // =============================================
+// Configure PHP to use this file for errors
+ini_set('log_errors', 1);
+ini_set('error_log', LOG_FILE);
 error_reporting(0);
 ini_set('display_errors', 0);
+error_reporting(E_ALL);
 ini_set('log_errors', 1);
 ini_set('error_log', __DIR__ . '/logs/error.log');
 
@@ -87,6 +91,12 @@ define('UPLOAD_MAX_SIZE', 5242880); // 5MB
 // =============================================
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
 define('UPLOAD_URL', SITE_URL . '/uploads/');
+
+// ====================
+//Define the log file path
+define('LOG_FILE', __DIR__ . '/logs/error.log');
+//=================================
+
 
 // =============================================
 // DATABASE CONNECTION (PDO with prepared statements)
