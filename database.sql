@@ -10,6 +10,7 @@ USE school_db;
 -- =============================================
 -- TABLE: users (all user types)
 -- =============================================
+
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -106,6 +107,14 @@ CREATE TABLE IF NOT EXISTS classes (
     sort_order INT DEFAULT 0,
     FOREIGN KEY (class_teacher_id) REFERENCES users(id) ON DELETE SET NULL,
     INDEX idx_class_name (class_name)
+);
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    action VARCHAR(255),
+    ip_address VARCHAR(45),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 -- =============================================
